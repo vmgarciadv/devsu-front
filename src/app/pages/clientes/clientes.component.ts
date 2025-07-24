@@ -6,26 +6,7 @@ import { SearchBarComponent } from '../../components/shared/search-bar/search-ba
   selector: 'app-clientes',
   standalone: true,
   imports: [CommonModule, SearchBarComponent],
-  template: `
-    <div class="page-container">
-      <div class="content-header">
-        <h2>Clientes</h2>
-      </div>
-
-      <app-search-bar 
-        placeholder="Buscar por nombre, ID, email..."
-        (searchChange)="onSearch($event)"
-        (newClick)="onNewCliente()">
-      </app-search-bar>
-
-      <div class="table-container">
-        <div class="table-placeholder" *ngIf="filteredClientes.length === 0">
-          <p>No hay clientes registrados</p>
-          <p class="subtitle">Haz clic en "Nuevo" para agregar un cliente</p>
-        </div>
-      </div>
-    </div>
-  `,
+  templateUrl: './clientes.component.html',
   styleUrls: ['./clientes.component.scss']
 })
 export class ClientesComponent implements OnInit {

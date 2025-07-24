@@ -22,5 +22,8 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 export class SidebarComponent {
   menuItems = [
     { label: 'Clientes', route: '/clientes' },
+    { label: 'Cuentas', route: '/cuentas' },
+    { label: 'Movimientos', route: '/movimientos' },
+    { label: 'Reportes', route: '/reportes' }
   ];
 }

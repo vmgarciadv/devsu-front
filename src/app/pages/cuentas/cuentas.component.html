@@ -1,18 +1,18 @@
 <div class="page-container">
   <div class="content-header">
-    <h2>Clientes</h2>
+    <h2>Cuentas</h2>
   </div>
 
   <app-search-bar 
     placeholder="Buscar por nombre, ID, email..."
     (searchChange)="onSearch($event)"
-    (newClick)="onNewCliente()">
+    (newClick)="onNewCuenta()">
   </app-search-bar>
 
   <div class="table-container">
-    <div class="table-placeholder" *ngIf="filteredClientes.length === 0">
-      <p>No hay clientes registrados</p>
-      <p class="subtitle">Haz clic en "Nuevo" para agregar un cliente</p>
+    <div class="table-placeholder" *ngIf="filteredCuentas.length === 0">
+      <p>No hay cuentas registradas</p>
+      <p class="subtitle">Haz clic en "Nuevo" para agregar una cuenta</p>
     </div>
   </div>
 </div>
