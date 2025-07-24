@@ -14,5 +14,41 @@
       <p>No hay clientes registrados</p>
       <p class="subtitle">Haz clic en "Nuevo" para agregar un cliente</p>
     </div>
+    
+    <table *ngIf="filteredClientes.length > 0" class="data-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Identificación</th>
+          <th>Género</th>
+          <th>Edad</th>
+          <th>Dirección</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cliente of filteredClientes">
+          <td>{{ cliente.Nombre }}</td>
+          <td>{{ cliente.Identificacion }}</td>
+          <td>{{ cliente.Genero }}</td>
+          <td>{{ cliente.Edad }}</td>
+          <td>{{ cliente.Direccion }}</td>
+          <td>{{ cliente.Telefono }}</td>
+          <td>
+            <span class="status" [class.active]="cliente.Estado" [class.inactive]="!cliente.Estado">
+              {{ cliente.Estado ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon" title="Editar">✏️</button>
+              <button class="btn-icon" title="Eliminar">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
