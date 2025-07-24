@@ -1,0 +1,18 @@
+<div class="page-container">
+  <div class="content-header">
+    <h2>Movimientos</h2>
+  </div>
+
+  <app-search-bar 
+    placeholder="Buscar por nombre, ID, email..."
+    (searchChange)="onSearch($event)"
+    (newClick)="onNewMovimiento()">
+  </app-search-bar>
+
+  <div class="table-container">
+    <div class="table-placeholder" *ngIf="filteredMovimientos.length === 0">
+      <p>No hay movimientos registrados</p>
+      <p class="subtitle">Haz clic en "Nuevo" para agregar un movimiento</p>
+    </div>
+  </div>
+</div>
