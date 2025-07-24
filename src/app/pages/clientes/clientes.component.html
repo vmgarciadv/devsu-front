@@ -1,1 +1,20 @@
-<p>clientes works!</p>
+<div class="page-container">
+  <div class="content-header">
+    <h2>Clientes</h2>
+  </div>
+
+  <app-search-bar 
+    placeholder="Buscar por nombre, ID, email..."
+    (searchChange)="onSearch($event)"
+    (newClick)="onNewCliente()">
+  </app-search-bar>
+
+  <div class="table-container">
+    <div class="table-placeholder" *ngIf="filteredClientes.length === 0">
+      <p>No hay clientes registrados</p>
+      <p class="subtitle">Haz clic en "Nuevo" para agregar un cliente</p>
+    </div>
+    
+    <!-- Aquí iría tu tabla cuando tengas datos -->
+  </div>
+</div>
