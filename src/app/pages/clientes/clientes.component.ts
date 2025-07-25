@@ -115,6 +115,10 @@ export class ClientesComponent implements OnInit {
   }
 
   onDeleteCliente(cliente: Cliente): void {
+    if (!cliente.Estado) {
+      this.notificationService.showError('Error', 'No se puede eliminar un cliente inactivo');
+      return;
+    }
     this.clienteToDelete = cliente;
     this.isConfirmationModalOpen = true;
   }

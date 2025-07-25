@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SearchBarComponent } from '../../components/shared/search-bar/search-bar.component';
 import { ModalCuentaComponent } from '../../components/shared/modal-cuenta/modal-cuenta.component';
 import { NotificationModalComponent } from '../../components/shared/notification-modal/notification-modal.component';
+import { ConfirmationModalComponent } from '../../components/shared/confirmation-modal/confirmation-modal.component';
 import { CuentasService } from '../../services/cuentas.service';
 import { NotificationService } from '../../services/notification.service';
 import { Cuenta } from '../../models/cuenta.model';
@@ -10,7 +11,7 @@ import { Cuenta } from '../../models/cuenta.model';
 @Component({
   selector: 'app-cuentas',
   standalone: true,
-  imports: [CommonModule, SearchBarComponent, ModalCuentaComponent, NotificationModalComponent],
+  imports: [CommonModule, SearchBarComponent, ModalCuentaComponent, NotificationModalComponent, ConfirmationModalComponent],
   templateUrl: './cuentas.component.html',
   styleUrl: './cuentas.component.scss'
 })
@@ -21,6 +22,9 @@ export class CuentasComponent implements OnInit {
   modalMode: 'create' | 'edit' = 'create';
   selectedCuenta: Cuenta | null = null;
   notificationState$;
+  
+  isConfirmationModalOpen: boolean = false;
+  cuentaToDelete: Cuenta | null = null;
 
   constructor(
     private cuentasService: CuentasService,
@@ -102,5 +106,42 @@ export class CuentasComponent implements OnInit {
 
   closeNotification(): void {
     this.notificationService.close();
+  }
+
+  onDeleteCuenta(cuenta: Cuenta): void {
+    if (!cuenta.Estado) {
+      this.notificationService.showError('Error', 'No se puede eliminar una cuenta inactiva');
+      return;
+    }
+    this.cuentaToDelete = cuenta;
+    this.isConfirmationModalOpen = true;
+  }
+
+  onConfirmDelete(): void {
+    if (this.cuentaToDelete && this.cuentaToDelete.NumeroCuenta) {
+      const numeroCuenta = typeof this.cuentaToDelete.NumeroCuenta === 'string' 
+        ? parseInt(this.cuentaToDelete.NumeroCuenta) 
+        : this.cuentaToDelete.NumeroCuenta;
+      
+      this.cuentasService.deleteCuenta(numeroCuenta).subscribe({
+        next: () => {
+          this.isConfirmationModalOpen = false;
+          this.notificationService.showSuccess('Cuenta eliminada correctamente');
+          this.loadCuentas();
+          this.cuentaToDelete = null;
+        },
+        error: (error) => {
+          this.isConfirmationModalOpen = false;
+          const errorMessage = error.error?.detail || error.error?.message || 'Error al eliminar cuenta';
+          this.notificationService.showError('Error', errorMessage);
+          this.cuentaToDelete = null;
+        }
+      });
+    }
+  }
+
+  onCancelDelete(): void {
+    this.isConfirmationModalOpen = false;
+    this.cuentaToDelete = null;
   }
 }

@@ -44,7 +44,11 @@
           <td>
             <div class="action-buttons">
               <button class="btn-icon" title="Editar" (click)="onEditCliente(cliente)">✏️</button>
-              <button class="btn-icon" title="Eliminar" (click)="onDeleteCliente(cliente)">🗑️</button>
+              <button class="btn-icon" 
+                      [title]="!cliente.Estado ? 'No se puede eliminar un cliente inactivo' : 'Eliminar'" 
+                      (click)="onDeleteCliente(cliente)"
+                      [disabled]="!cliente.Estado"
+                      [class.disabled]="!cliente.Estado">🗑️</button>
             </div>
           </td>
         </tr>

@@ -40,7 +40,11 @@
           <td>
             <div class="action-buttons">
               <button class="btn-icon" title="Editar" (click)="onEditCuenta(cuenta)">✏️</button>
-              <button class="btn-icon" title="Eliminar">🗑️</button>
+              <button class="btn-icon" 
+                      [title]="!cuenta.Estado ? 'No se puede eliminar una cuenta inactiva' : 'Eliminar'" 
+                      (click)="onDeleteCuenta(cuenta)"
+                      [disabled]="!cuenta.Estado"
+                      [class.disabled]="!cuenta.Estado">🗑️</button>
             </div>
           </td>
         </tr>
@@ -64,4 +68,15 @@
     [message]="notification.message"
     [onClose]="closeNotification.bind(this)">
   </app-notification-modal>
+
+  <app-confirmation-modal
+    [isOpen]="isConfirmationModalOpen"
+    title="Eliminar Cuenta"
+    [message]="'¿Está seguro de que desea eliminar la cuenta ' + (cuentaToDelete?.NumeroCuenta || '') + '?'"
+    confirmText="Eliminar"
+    cancelText="Cancelar"
+    type="danger"
+    (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()">
+  </app-confirmation-modal>
 </div>
