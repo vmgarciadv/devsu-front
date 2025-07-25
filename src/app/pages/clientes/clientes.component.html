@@ -14,5 +14,69 @@
       <p>No hay clientes registrados</p>
       <p class="subtitle">Haz clic en "Nuevo" para agregar un cliente</p>
     </div>
+    
+    <table *ngIf="filteredClientes.length > 0" class="data-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Identificación</th>
+          <th>Género</th>
+          <th>Edad</th>
+          <th>Dirección</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cliente of filteredClientes">
+          <td>{{ cliente.Nombre }}</td>
+          <td>{{ cliente.Identificacion }}</td>
+          <td>{{ cliente.Genero }}</td>
+          <td>{{ cliente.Edad }}</td>
+          <td>{{ cliente.Direccion }}</td>
+          <td>{{ cliente.Telefono }}</td>
+          <td>
+            <span class="status" [class.active]="cliente.Estado" [class.inactive]="!cliente.Estado">
+              {{ cliente.Estado ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon" title="Editar" (click)="onEditCliente(cliente)">✏️</button>
+              <button class="btn-icon" title="Eliminar" (click)="onDeleteCliente(cliente)">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+
+  <app-modal-cliente 
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [clienteToEdit]="selectedCliente"
+    (closeModal)="onCloseModal()"
+    (saveCliente)="onSaveCliente($event)">
+  </app-modal-cliente>
+
+  <app-notification-modal
+    *ngIf="notificationState$ | async as notification"
+    [isOpen]="notification.isOpen"
+    [type]="notification.type"
+    [title]="notification.title"
+    [message]="notification.message"
+    [onClose]="closeNotification.bind(this)">
+  </app-notification-modal>
+
+  <app-confirmation-modal
+    [isOpen]="isConfirmationModalOpen"
+    title="Eliminar Cliente"
+    [message]="'¿Está seguro de que desea eliminar al cliente ' + (clienteToDelete?.Nombre || '') + '?'"
+    confirmText="Eliminar"
+    cancelText="Cancelar"
+    type="danger"
+    (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()">
+  </app-confirmation-modal>
 </div>
