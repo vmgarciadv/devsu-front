@@ -4,7 +4,7 @@
   </div>
 
   <app-search-bar 
-    placeholder="Buscar por nombre, ID, email..."
+    placeholder="Buscar por número de cuenta, tipo, cliente..."
     (searchChange)="onSearch($event)"
     (newClick)="onNewCuenta()">
   </app-search-bar>
@@ -14,5 +14,37 @@
       <p>No hay cuentas registradas</p>
       <p class="subtitle">Haz clic en "Nuevo" para agregar una cuenta</p>
     </div>
+    
+    <table *ngIf="filteredCuentas.length > 0" class="data-table">
+      <thead>
+        <tr>
+          <th>Número de Cuenta</th>
+          <th>Tipo de Cuenta</th>
+          <th>Saldo Inicial</th>
+          <th>Cliente</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cuenta of filteredCuentas">
+          <td>{{ cuenta.NumeroCuenta }}</td>
+          <td>{{ cuenta.TipoCuenta }}</td>
+          <td>{{ cuenta.SaldoInicial | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ cuenta.NombreCliente || 'N/A' }}</td>
+          <td>
+            <span class="status" [class.active]="cuenta.Estado" [class.inactive]="!cuenta.Estado">
+              {{ cuenta.Estado ? 'Activa' : 'Inactiva' }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon" title="Editar">✏️</button>
+              <button class="btn-icon" title="Eliminar">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
