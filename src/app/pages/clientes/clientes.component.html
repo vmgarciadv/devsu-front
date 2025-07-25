@@ -44,7 +44,7 @@
           <td>
             <div class="action-buttons">
               <button class="btn-icon" title="Editar" (click)="onEditCliente(cliente)">✏️</button>
-              <button class="btn-icon" title="Eliminar">🗑️</button>
+              <button class="btn-icon" title="Eliminar" (click)="onDeleteCliente(cliente)">🗑️</button>
             </div>
           </td>
         </tr>
@@ -68,4 +68,15 @@
     [message]="notification.message"
     [onClose]="closeNotification.bind(this)">
   </app-notification-modal>
+
+  <app-confirmation-modal
+    [isOpen]="isConfirmationModalOpen"
+    title="Eliminar Cliente"
+    [message]="'¿Está seguro de que desea eliminar al cliente ' + (clienteToDelete?.Nombre || '') + '?'"
+    confirmText="Eliminar"
+    cancelText="Cancelar"
+    type="danger"
+    (confirm)="onConfirmDelete()"
+    (cancel)="onCancelDelete()">
+  </app-confirmation-modal>
 </div>

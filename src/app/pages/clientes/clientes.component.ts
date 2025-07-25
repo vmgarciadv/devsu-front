@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SearchBarComponent } from '../../components/shared/search-bar/search-bar.component';
 import { ModalClienteComponent } from '../../components/shared/modal-cliente/modal-cliente.component';
 import { NotificationModalComponent } from '../../components/shared/notification-modal/notification-modal.component';
+import { ConfirmationModalComponent } from '../../components/shared/confirmation-modal/confirmation-modal.component';
 import { ClientesService } from '../../services/clientes.service';
 import { NotificationService } from '../../services/notification.service';
 import { Cliente } from '../../models/cliente.model';
@@ -10,7 +11,7 @@ import { Cliente } from '../../models/cliente.model';
 @Component({
   selector: 'app-clientes',
   standalone: true,
-  imports: [CommonModule, SearchBarComponent, ModalClienteComponent, NotificationModalComponent],
+  imports: [CommonModule, SearchBarComponent, ModalClienteComponent, NotificationModalComponent, ConfirmationModalComponent],
   templateUrl: './clientes.component.html',
   styleUrls: ['./clientes.component.scss']
 })
@@ -20,6 +21,8 @@ export class ClientesComponent implements OnInit {
   isModalOpen: boolean = false;
   modalMode: 'create' | 'edit' = 'create';
   selectedCliente: Cliente | null = null;
+  isConfirmationModalOpen: boolean = false;
+  clienteToDelete: Cliente | null = null;
   notificationState$;
 
   constructor(
@@ -109,5 +112,35 @@ export class ClientesComponent implements OnInit {
 
   closeNotification(): void {
     this.notificationService.close();
+  }
+
+  onDeleteCliente(cliente: Cliente): void {
+    this.clienteToDelete = cliente;
+    this.isConfirmationModalOpen = true;
+  }
+
+  onConfirmDelete(): void {
+    if (this.clienteToDelete && this.clienteToDelete.ClienteId) {
+      this.clientesService.deleteCliente(this.clienteToDelete.ClienteId).subscribe({
+        next: () => {
+          this.isConfirmationModalOpen = false;
+          this.clienteToDelete = null;
+          this.notificationService.showSuccess('Cliente eliminado exitosamente');
+          // Cargar la lista de clientes nuevamente
+          this.loadClientes();
+        },
+        error: (error) => {
+          this.isConfirmationModalOpen = false;
+          this.clienteToDelete = null;
+          const errorMessage = error.error?.detail || error.error?.message || 'Error al eliminar cliente';
+          this.notificationService.showError('Error', errorMessage);
+        }
+      });
+    }
+  }
+
+  onCancelDelete(): void {
+    this.isConfirmationModalOpen = false;
+    this.clienteToDelete = null;
   }
 }

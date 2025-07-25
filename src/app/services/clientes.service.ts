@@ -27,4 +27,8 @@ export class ClientesService {
   patchCliente(id: number, cliente: Partial<Cliente>): Observable<Cliente> {
     return this.http.patch<Cliente>(`${this.apiUrl}/${id}`, cliente);
   }
+
+  deleteCliente(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }
