@@ -57,4 +57,13 @@
     (closeModal)="onCloseModal()"
     (saveCliente)="onSaveCliente($event)">
   </app-modal-cliente>
+
+  <app-notification-modal
+    *ngIf="notificationState$ | async as notification"
+    [isOpen]="notification.isOpen"
+    [type]="notification.type"
+    [title]="notification.title"
+    [message]="notification.message"
+    [onClose]="closeNotification.bind(this)">
+  </app-notification-modal>
 </div>
