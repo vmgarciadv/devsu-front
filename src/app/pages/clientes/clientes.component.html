@@ -51,4 +51,10 @@
       </tbody>
     </table>
   </div>
+
+  <app-modal-cliente 
+    [isOpen]="isModalOpen"
+    (closeModal)="onCloseModal()"
+    (saveCliente)="onSaveCliente($event)">
+  </app-modal-cliente>
 </div>
