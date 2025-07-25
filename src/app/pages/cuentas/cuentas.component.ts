@@ -60,6 +60,12 @@ export class CuentasComponent implements OnInit {
     this.selectedCuenta = null;
   }
 
+  onEditCuenta(cuenta: Cuenta): void {
+    this.modalMode = 'edit';
+    this.selectedCuenta = cuenta;
+    this.isModalOpen = true;
+  }
+
   onSaveCuenta(event: {data: any, isPartialUpdate: boolean, modifiedFields: string[]}): void {
     if (this.modalMode === 'create') {
       this.cuentasService.createCuenta(event.data).subscribe({
@@ -71,6 +77,23 @@ export class CuentasComponent implements OnInit {
         error: (error) => {
           this.isModalOpen = false;
           const errorMessage = error.error?.detail || error.error?.message || 'Error al crear cuenta';
+          this.notificationService.showError('Error', errorMessage);
+        }
+      });
+    } else if (this.modalMode === 'edit' && this.selectedCuenta) {
+      const updateObservable = event.isPartialUpdate 
+        ? this.cuentasService.patchCuenta(this.selectedCuenta.CuentaId!, event.data)
+        : this.cuentasService.updateCuenta(this.selectedCuenta.CuentaId!, event.data);
+      
+      updateObservable.subscribe({
+        next: () => {
+          this.isModalOpen = false;
+          this.notificationService.showSuccess('Cuenta actualizada correctamente');
+          this.loadCuentas();
+        },
+        error: (error) => {
+          this.isModalOpen = false;
+          const errorMessage = error.error?.detail || error.error?.message || 'Error al actualizar cuenta';
           this.notificationService.showError('Error', errorMessage);
         }
       });

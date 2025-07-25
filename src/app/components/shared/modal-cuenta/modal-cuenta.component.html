@@ -14,10 +14,9 @@
             id="numeroCuenta" 
             name="numeroCuenta"
             [(ngModel)]="cuenta.NumeroCuenta"
-            (ngModelChange)="onFieldChange('NumeroCuenta')"
-            (blur)="onFieldChange('NumeroCuenta')"
             [class.error]="touched.NumeroCuenta && errors.NumeroCuenta"
             placeholder="Ingrese el número de cuenta"
+            disabled
             required>
           <span class="error-message" *ngIf="touched.NumeroCuenta && errors.NumeroCuenta">
             {{ errors.NumeroCuenta }}
@@ -72,7 +71,7 @@
             required>
             <option value="">Seleccione un cliente</option>
             <option *ngFor="let cliente of activeClientes" [value]="cliente.Nombre">
-              {{ cliente.Nombre }} - {{ cliente.Identificacion }}
+              {{ cliente.Nombre }} - {{ cliente.Identificacion }}{{ !cliente.Estado ? ' (Inactivo)' : '' }}
             </option>
           </select>
           <span class="error-message" *ngIf="touched.nombreCliente && errors.nombreCliente">

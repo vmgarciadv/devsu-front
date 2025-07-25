@@ -67,9 +67,12 @@ export class ModalCuentaComponent implements OnInit, OnChanges {
       if (this.mode === 'edit' && this.cuentaToEdit) {
         this.cuenta = {
           ...this.cuentaToEdit,
-          nombreCliente: this.cuentaToEdit.NombreCliente || ''
+          nombreCliente: this.cuentaToEdit.NombreCliente || '',
+          SaldoInicial: this.cuentaToEdit.SaldoInicial.toString()
         };
         this.originalCuenta = { ...this.cuenta };
+
+        this.loadClientes();
       } else if (this.mode === 'create') {
         this.resetForm();
       }
@@ -82,6 +85,23 @@ export class ModalCuentaComponent implements OnInit, OnChanges {
         this.clientes = clientes;
         // Filtrar clientes activos
         this.activeClientes = clientes.filter(cliente => cliente.Estado === true);
+        
+        // Agregar clientes inactivos para la edicion
+        if (this.mode === 'edit' && this.cuentaToEdit && this.cuenta.nombreCliente) {
+          const currentClientExists = this.activeClientes.some(
+            cliente => cliente.Nombre === this.cuenta.nombreCliente
+          );
+          
+          if (!currentClientExists) {
+            const inactiveClient = clientes.find(
+              cliente => cliente.Nombre === this.cuenta.nombreCliente && !cliente.Estado
+            );
+            
+            if (inactiveClient) {
+              this.activeClientes = [...this.activeClientes, inactiveClient];
+            }
+          }
+        }
       },
       error: (error) => {
         console.error('Error al cargar clientes:', error);
@@ -125,18 +145,15 @@ export class ModalCuentaComponent implements OnInit, OnChanges {
             if (field === 'TipoCuenta') {
               dataToSend.tipoCuenta = this.cuenta.TipoCuenta;
             } else if (field === 'SaldoInicial') {
-              dataToSend.saldoInicial = this.cuenta.SaldoInicial;
+              dataToSend.saldoInicial = Number(this.cuenta.SaldoInicial);
             } else if (field === 'nombreCliente') {
               dataToSend.nombreCliente = this.cuenta.nombreCliente;
-            } else if (field === 'NumeroCuenta') {
-              dataToSend.numeroCuenta = this.cuenta.NumeroCuenta;
             }
           });
         } else {
           dataToSend = {
-            numeroCuenta: this.cuenta.NumeroCuenta,
             tipoCuenta: this.cuenta.TipoCuenta,
-            saldoInicial: this.cuenta.SaldoInicial,
+            saldoInicial: Number(this.cuenta.SaldoInicial),
             nombreCliente: this.cuenta.nombreCliente
           };
         }
@@ -178,9 +195,7 @@ export class ModalCuentaComponent implements OnInit, OnChanges {
 
     switch (field) {
       case 'NumeroCuenta':
-        if (this.mode === 'edit' && !this.cuenta.NumeroCuenta.trim()) {
-          this.errors.NumeroCuenta = 'El número de cuenta es requerido';
-        }
+        // No se puede editar, no hace falta validacion
         break;
 
       case 'TipoCuenta':
