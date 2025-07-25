@@ -4,7 +4,7 @@
   </div>
 
   <app-search-bar 
-    placeholder="Buscar por nombre, ID, email..."
+    placeholder="Buscar por número de cuenta, tipo de movimiento, fecha..."
     (searchChange)="onSearch($event)"
     (newClick)="onNewMovimiento()">
   </app-search-bar>
@@ -14,5 +14,41 @@
       <p>No hay movimientos registrados</p>
       <p class="subtitle">Haz clic en "Nuevo" para agregar un movimiento</p>
     </div>
+    
+    <table *ngIf="filteredMovimientos.length > 0" class="data-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Número de Cuenta</th>
+          <th>Tipo de Movimiento</th>
+          <th>Valor</th>
+          <th>Saldo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let movimiento of filteredMovimientos">
+          <td>{{ movimiento.Fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ movimiento.NumeroCuenta }}</td>
+          <td>{{ movimiento.TipoMovimiento }}</td>
+          <td [class.debit]="movimiento.Valor < 0" [class.credit]="movimiento.Valor > 0">
+            {{ movimiento.Valor | currency:'USD':'symbol':'1.2-2' }}
+          </td>
+          <td>{{ movimiento.Saldo | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>
+            N/A
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+
+  <app-notification-modal
+    *ngIf="notificationState$ | async as notification"
+    [isOpen]="notification.isOpen"
+    [type]="notification.type"
+    [title]="notification.title"
+    [message]="notification.message"
+    [onClose]="closeNotification.bind(this)">
+  </app-notification-modal>
 </div>
