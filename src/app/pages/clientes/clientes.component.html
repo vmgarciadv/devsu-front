@@ -43,7 +43,7 @@
           </td>
           <td>
             <div class="action-buttons">
-              <button class="btn-icon" title="Editar">✏️</button>
+              <button class="btn-icon" title="Editar" (click)="onEditCliente(cliente)">✏️</button>
               <button class="btn-icon" title="Eliminar">🗑️</button>
             </div>
           </td>
@@ -54,6 +54,8 @@
 
   <app-modal-cliente 
     [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [clienteToEdit]="selectedCliente"
     (closeModal)="onCloseModal()"
     (saveCliente)="onSaveCliente($event)">
   </app-modal-cliente>

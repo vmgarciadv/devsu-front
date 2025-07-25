@@ -18,6 +18,8 @@ export class ClientesComponent implements OnInit {
   clientes: Cliente[] = [];
   filteredClientes: Cliente[] = [];
   isModalOpen: boolean = false;
+  modalMode: 'create' | 'edit' = 'create';
+  selectedCliente: Cliente | null = null;
   notificationState$;
 
   constructor(
@@ -48,27 +50,61 @@ export class ClientesComponent implements OnInit {
   }
 
   onNewCliente(): void {
+    this.modalMode = 'create';
+    this.selectedCliente = null;
     this.isModalOpen = true;
   }
 
   onCloseModal(): void {
     this.isModalOpen = false;
+    this.selectedCliente = null;
   }
 
-  onSaveCliente(cliente: Cliente): void {
-    this.clientesService.createCliente(cliente).subscribe({
-      next: (newCliente) => {
-        this.clientes.push(newCliente);
-        this.filteredClientes = [...this.clientes];
-        this.isModalOpen = false;
-        this.notificationService.showSuccess('Operación exitosa');
-      },
-      error: (error) => {
-        this.isModalOpen = false;
-        const errorMessage = error.error?.detail || error.error?.message || 'Error al crear cliente';
-        this.notificationService.showError('Error', errorMessage);
-      }
-    });
+  onSaveCliente(event: {data: any, isPartialUpdate: boolean, modifiedFields: string[]}): void {
+    if (this.modalMode === 'create') {
+      this.clientesService.createCliente(event.data).subscribe({
+        next: (newCliente) => {
+          this.clientes.push(newCliente);
+          this.filteredClientes = [...this.clientes];
+          this.isModalOpen = false;
+          this.notificationService.showSuccess('Operación exitosa');
+        },
+        error: (error) => {
+          this.isModalOpen = false;
+          const errorMessage = error.error?.detail || error.error?.message || 'Error al crear cliente';
+          this.notificationService.showError('Error', errorMessage);
+        }
+      });
+    } else if (this.modalMode === 'edit' && this.selectedCliente && this.selectedCliente.ClienteId) {
+      // Usar PATCH o PUT según el evento
+      const updateMethod = event.isPartialUpdate 
+        ? this.clientesService.patchCliente(this.selectedCliente.ClienteId, event.data)
+        : this.clientesService.updateCliente(this.selectedCliente.ClienteId, event.data);
+      
+      updateMethod.subscribe({
+        next: (updatedCliente) => {
+          const index = this.clientes.findIndex(c => c.ClienteId === this.selectedCliente!.ClienteId);
+          if (index !== -1) {
+            this.clientes[index] = updatedCliente;
+            this.filteredClientes = [...this.clientes];
+          }
+          this.isModalOpen = false;
+          this.notificationService.showSuccess('Operación exitosa');
+        },
+        error: (error) => {
+          this.isModalOpen = false;
+          this.selectedCliente = null;
+          const errorMessage = error.error?.detail || error.error?.message || 'Error al actualizar cliente';
+          this.notificationService.showError('Error', errorMessage);
+        }
+      });
+    }
+  }
+
+  onEditCliente(cliente: Cliente): void {
+    this.modalMode = 'edit';
+    this.selectedCliente = cliente;
+    this.isModalOpen = true;
   }
 
   closeNotification(): void {

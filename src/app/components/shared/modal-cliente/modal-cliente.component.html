@@ -1,7 +1,7 @@
 <div class="modal-overlay" *ngIf="isOpen" (click)="onClose()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>Nuevo Cliente</h3>
+      <h3>{{ mode === 'create' ? 'Nuevo Cliente' : 'Editar Cliente' }}</h3>
       <button class="close-button" (click)="onClose()">×</button>
     </div>
     
@@ -18,7 +18,7 @@
             (blur)="onFieldChange('Nombre')"
             [class.error]="touched.Nombre && errors.Nombre"
             placeholder="Ingrese el nombre completo"
-            maxlength="10"
+            maxlength="30"
             required>
           <span class="error-message" *ngIf="touched.Nombre && errors.Nombre">
             {{ errors.Nombre }}
@@ -128,7 +128,7 @@
             (ngModelChange)="onFieldChange('Contrasena')"
             (blur)="onFieldChange('Contrasena')"
             [class.error]="touched.Contrasena && errors.Contrasena"
-            placeholder="Ingrese la contraseña"
+            placeholder="{{ mode === 'edit' ? 'Dejar vacío para mantener la actual' : 'Ingrese la contraseña' }}"
             required>
           <span class="error-message" *ngIf="touched.Contrasena && errors.Contrasena">
             {{ errors.Contrasena }}

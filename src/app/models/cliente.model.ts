@@ -1,4 +1,5 @@
 export interface Cliente {
+  ClienteId?: number;
   Nombre: string;
   Genero: string;
   Edad: number;
