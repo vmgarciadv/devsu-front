@@ -79,6 +79,15 @@
     </div>
   </div>
 
+  <div class="download-section" *ngIf="reportes.length > 0">
+    <button class="btn btn-secondary" (click)="downloadPDF()">
+      <span>📋</span> Descargar PDF
+    </button>
+    <button class="btn btn-secondary" (click)="downloadJSON()">
+      <span>📄</span> Descargar JSON
+    </button>
+  </div>
+
   <div class="table-container" *ngIf="reportes.length > 0">
     <table class="data-table">
       <thead>
@@ -95,7 +104,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let reporte of reportes">
-          <td>{{ reporte.Fecha | date:'dd/MM/yyyy' }}</td>
+          <td>
+            {{ reporte.Fecha | date:'dd/MM/yyyy' }}
+          </td>
           <td>{{ reporte.Cliente }}</td>
           <td>{{ reporte.NumeroCuenta }}</td>
           <td>{{ reporte.TipoCuenta }}</td>
