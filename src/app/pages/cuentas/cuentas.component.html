@@ -47,4 +47,21 @@
       </tbody>
     </table>
   </div>
+
+  <app-modal-cuenta
+    [isOpen]="isModalOpen"
+    [mode]="modalMode"
+    [cuentaToEdit]="selectedCuenta"
+    (closeModal)="onCloseModal()"
+    (saveCuenta)="onSaveCuenta($event)">
+  </app-modal-cuenta>
+
+  <app-notification-modal
+    *ngIf="notificationState$ | async as notification"
+    [isOpen]="notification.isOpen"
+    [type]="notification.type"
+    [title]="notification.title"
+    [message]="notification.message"
+    [onClose]="closeNotification.bind(this)">
+  </app-notification-modal>
 </div>
