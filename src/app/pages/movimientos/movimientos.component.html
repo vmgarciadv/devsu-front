@@ -43,6 +43,12 @@
     </table>
   </div>
 
+  <app-modal-movimiento
+    [isOpen]="isModalOpen"
+    (closeModal)="onCloseModal()"
+    (saveMovimiento)="onSaveMovimiento($event)">
+  </app-modal-movimiento>
+
   <app-notification-modal
     *ngIf="notificationState$ | async as notification"
     [isOpen]="notification.isOpen"

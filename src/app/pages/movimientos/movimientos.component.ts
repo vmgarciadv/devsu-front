@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchBarComponent } from '../../components/shared/search-bar/search-bar.component';
 import { NotificationModalComponent } from '../../components/shared/notification-modal/notification-modal.component';
+import { ModalMovimientoComponent } from '../../components/shared/modal-movimiento/modal-movimiento.component';
 import { MovimientosService } from '../../services/movimientos.service';
 import { NotificationService } from '../../services/notification.service';
 import { Movimiento } from '../../models/movimiento.model';
@@ -9,7 +10,7 @@ import { Movimiento } from '../../models/movimiento.model';
 @Component({
   selector: 'app-movimientos',
   standalone: true,
-  imports: [CommonModule, SearchBarComponent, NotificationModalComponent],
+  imports: [CommonModule, SearchBarComponent, NotificationModalComponent, ModalMovimientoComponent],
   templateUrl: './movimientos.component.html',
   styleUrl: './movimientos.component.scss'
 })
@@ -17,6 +18,7 @@ export class MovimientosComponent implements OnInit {
   movimientos: Movimiento[] = [];
   filteredMovimientos: Movimiento[] = [];
   notificationState$;
+  isModalOpen: boolean = false;
 
   constructor(
     private movimientosService: MovimientosService,
@@ -46,7 +48,26 @@ export class MovimientosComponent implements OnInit {
   }
 
   onNewMovimiento(): void {
-    console.log('Crear nuevo movimiento');
+    this.isModalOpen = true;
+  }
+
+  onCloseModal(): void {
+    this.isModalOpen = false;
+  }
+
+  onSaveMovimiento(data: any): void {
+    this.movimientosService.createMovimiento(data).subscribe({
+      next: () => {
+        this.isModalOpen = false;
+        this.notificationService.showSuccess('Movimiento creado exitosamente');
+        this.loadMovimientos();
+      },
+      error: (error) => {
+        this.isModalOpen = false;
+        const errorMessage = error.error?.detail || error.error?.message || 'Error al crear movimiento';
+        this.notificationService.showError('Error', errorMessage);
+      }
+    });
   }
 
   closeNotification(): void {
