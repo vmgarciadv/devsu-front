@@ -1,8 +1,18 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Cliente } from '../models/cliente.model';
 import { environment } from '../../environments/environment';
+
+export interface PaginatedResponse<T> {
+  Data: T[];
+  TotalRecords: number;
+  TotalPages: number;
+  PageNumber: number;
+  PageSize: number;
+  HasPreviousPage: boolean;
+  HasNextPage: boolean;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +22,15 @@ export class ClientesService {
 
   constructor(private http: HttpClient) { }
 
-  getClientes(): Observable<Cliente[]> {
+  getClientes(pageNumber: number = 1, pageSize: number = 15): Observable<PaginatedResponse<Cliente>> {
+    const params = new HttpParams()
+      .set('pageNumber', pageNumber.toString())
+      .set('pageSize', pageSize.toString());
+    
+    return this.http.get<PaginatedResponse<Cliente>>(this.apiUrl, { params });
+  }
+  
+  getAllClientes(): Observable<Cliente[]> {
     return this.http.get<Cliente[]>(this.apiUrl);
   }
 

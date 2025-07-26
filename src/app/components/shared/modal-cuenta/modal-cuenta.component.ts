@@ -80,7 +80,7 @@ export class ModalCuentaComponent implements OnInit, OnChanges {
   }
 
   loadClientes(): void {
-    this.clientesService.getClientes().subscribe({
+    this.clientesService.getAllClientes().subscribe({
       next: (clientes) => {
         this.clientes = clientes;
         // Filtrar clientes activos

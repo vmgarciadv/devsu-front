@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SearchBarComponent } from '../../components/shared/search-bar/search-bar.component';
 import { ModalClienteComponent } from '../../components/shared/modal-cliente/modal-cliente.component';
 import { NotificationModalComponent } from '../../components/shared/notification-modal/notification-modal.component';
@@ -11,7 +12,7 @@ import { Cliente } from '../../models/cliente.model';
 @Component({
   selector: 'app-clientes',
   standalone: true,
-  imports: [CommonModule, SearchBarComponent, ModalClienteComponent, NotificationModalComponent, ConfirmationModalComponent],
+  imports: [CommonModule, FormsModule, SearchBarComponent, ModalClienteComponent, NotificationModalComponent, ConfirmationModalComponent],
   templateUrl: './clientes.component.html',
   styleUrls: ['./clientes.component.scss']
 })
@@ -24,6 +25,15 @@ export class ClientesComponent implements OnInit {
   isConfirmationModalOpen: boolean = false;
   clienteToDelete: Cliente | null = null;
   notificationState$;
+  
+  // Paginacion
+  currentPage: number = 1;
+  pageSize: number = 15;
+  totalPages: number = 0;
+  totalItems: number = 0;
+  
+  // Usar Math en el template
+  Math = Math;
 
   constructor(
     private clientesService: ClientesService,
@@ -36,16 +46,26 @@ export class ClientesComponent implements OnInit {
     this.loadClientes();
   }
 
-  loadClientes(): void {
-    this.clientesService.getClientes().subscribe({
-      next: (data) => {
-        this.clientes = data;
+  loadClientes(page: number = 1): void {
+    this.clientesService.getClientes(page, this.pageSize).subscribe({
+      next: (response) => {
+        // Mapear respuesta del API
+        this.clientes = response.Data;
         this.filteredClientes = [...this.clientes];
+        this.currentPage = response.PageNumber;
+        this.totalPages = response.TotalPages;
+        this.totalItems = response.TotalRecords;
       },
       error: (error) => {
         console.error('Error al cargar clientes:', error);
       }
     });
+  }
+  
+  onPageChange(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.loadClientes(page);
+    }
   }
 
   onSearch(searchTerm: string): void {
@@ -131,7 +151,7 @@ export class ClientesComponent implements OnInit {
           this.clienteToDelete = null;
           this.notificationService.showSuccess('Cliente eliminado exitosamente');
           // Cargar la lista de clientes nuevamente
-          this.loadClientes();
+          this.loadClientes(this.currentPage);
         },
         error: (error) => {
           this.isConfirmationModalOpen = false;
@@ -146,5 +166,47 @@ export class ClientesComponent implements OnInit {
   onCancelDelete(): void {
     this.isConfirmationModalOpen = false;
     this.clienteToDelete = null;
+  }
+  
+  getPageNumbers(): (number | string)[] {
+    const pages: (number | string)[] = [];
+    const maxPagesToShow = 5;
+    
+    if (this.totalPages <= maxPagesToShow) {
+      // Mostrar todo si se puede
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Siempre mostrar la primera pagina
+      pages.push(1);
+      
+      // Calcular rango de paginas
+      let start = Math.max(2, this.currentPage - 1);
+      let end = Math.min(this.totalPages - 1, this.currentPage + 1);
+      
+      if (start > 2) {
+        pages.push('...');
+      }
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      
+      if (end < this.totalPages - 1) {
+        pages.push('...');
+      }
+      
+      // Mostrar ultima pagina
+      pages.push(this.totalPages);
+    }
+    
+    return pages;
+  }
+  
+  onPageSizeChange(): void {
+    // Volver a la primera pagina si cambia el tamaño
+    this.currentPage = 1;
+    this.loadClientes(1);
   }
 }
