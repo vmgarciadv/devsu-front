@@ -51,7 +51,7 @@ export class ModalMovimientoComponent implements OnInit, OnChanges {
   }
 
   loadCuentas(): void {
-    this.cuentasService.getCuentas().subscribe({
+    this.cuentasService.getAllCuentas().subscribe({
       next: (cuentas) => {
         this.cuentas = cuentas;
         // Filtrar cuentas activas
