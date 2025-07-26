@@ -22,10 +22,14 @@ export class ClientesService {
 
   constructor(private http: HttpClient) { }
 
-  getClientes(pageNumber: number = 1, pageSize: number = 15): Observable<PaginatedResponse<Cliente>> {
-    const params = new HttpParams()
+  getClientes(pageNumber: number = 1, pageSize: number = 15, searchQuery?: string): Observable<PaginatedResponse<Cliente>> {
+    let params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());
+    
+    if (searchQuery && searchQuery.trim()) {
+      params = params.set('q', searchQuery.trim());
+    }
     
     return this.http.get<PaginatedResponse<Cliente>>(this.apiUrl, { params });
   }
