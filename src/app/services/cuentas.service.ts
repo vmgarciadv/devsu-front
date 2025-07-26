@@ -13,10 +13,14 @@ export class CuentasService {
 
   constructor(private http: HttpClient) { }
 
-  getCuentas(pageNumber: number = 1, pageSize: number = 15): Observable<PaginatedResponse<Cuenta>> {
-    const params = new HttpParams()
+  getCuentas(pageNumber: number = 1, pageSize: number = 15, searchQuery?: string): Observable<PaginatedResponse<Cuenta>> {
+    let params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());
+    
+    if (searchQuery && searchQuery.trim()) {
+      params = params.set('q', searchQuery.trim());
+    }
     
     return this.http.get<PaginatedResponse<Cuenta>>(this.apiUrl, { params });
   }
