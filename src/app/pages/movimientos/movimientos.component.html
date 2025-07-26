@@ -4,7 +4,7 @@
   </div>
 
   <app-search-bar 
-    placeholder="Buscar por número de cuenta, tipo de movimiento, fecha..."
+    placeholder="Buscar por número de cuenta, tipo de movimiento, saldo..."
     (searchChange)="onSearch($event)"
     (newClick)="onNewMovimiento()">
   </app-search-bar>
@@ -28,7 +28,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let movimiento of filteredMovimientos">
-          <td>{{ movimiento.Fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ movimiento.Fecha | date:'dd/MM/yyyy' }}</td>
           <td>{{ movimiento.NumeroCuenta }}</td>
           <td>{{ movimiento.TipoMovimiento }}</td>
           <td [class.debit]="movimiento.Valor < 0" [class.credit]="movimiento.Valor > 0">

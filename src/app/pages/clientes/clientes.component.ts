@@ -32,6 +32,9 @@ export class ClientesComponent implements OnInit {
   totalPages: number = 0;
   totalItems: number = 0;
   
+  // Busqueda
+  searchQuery: string = '';
+  
   // Usar Math en el template
   Math = Math;
 
@@ -47,7 +50,7 @@ export class ClientesComponent implements OnInit {
   }
 
   loadClientes(page: number = 1): void {
-    this.clientesService.getClientes(page, this.pageSize).subscribe({
+    this.clientesService.getClientes(page, this.pageSize, this.searchQuery).subscribe({
       next: (response) => {
         // Mapear respuesta del API
         this.clientes = response.Data;
@@ -69,7 +72,9 @@ export class ClientesComponent implements OnInit {
   }
 
   onSearch(searchTerm: string): void {
-    console.log('Buscando:', searchTerm);
+    this.searchQuery = searchTerm;
+    this.currentPage = 1;
+    this.loadClientes(1);
   }
 
   onNewCliente(): void {

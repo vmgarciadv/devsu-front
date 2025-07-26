@@ -33,6 +33,9 @@ export class CuentasComponent implements OnInit {
   totalPages: number = 0;
   totalItems: number = 0;
   
+  // Busqueda
+  searchQuery: string = '';
+  
   // Usar Math en el template
   Math = Math;
 
@@ -48,7 +51,7 @@ export class CuentasComponent implements OnInit {
   }
 
   loadCuentas(page: number = 1): void {
-    this.cuentasService.getCuentas(page, this.pageSize).subscribe({
+    this.cuentasService.getCuentas(page, this.pageSize, this.searchQuery).subscribe({
       next: (response) => {
         this.cuentas = response.Data;
         this.filteredCuentas = [...this.cuentas];
@@ -63,7 +66,9 @@ export class CuentasComponent implements OnInit {
   }
 
   onSearch(searchTerm: string): void {
-    console.log('Buscando:', searchTerm);
+    this.searchQuery = searchTerm;
+    this.currentPage = 1;
+    this.loadCuentas(1);
   }
 
   onNewCuenta(): void {
