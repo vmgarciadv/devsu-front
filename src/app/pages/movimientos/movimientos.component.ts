@@ -27,6 +27,9 @@ export class MovimientosComponent implements OnInit {
   totalPages: number = 0;
   totalItems: number = 0;
   
+  // Busqueda
+  searchQuery: string = '';
+  
   // Usar Math en el template
   Math = Math;
 
@@ -42,7 +45,7 @@ export class MovimientosComponent implements OnInit {
   }
 
   loadMovimientos(page: number = 1): void {
-    this.movimientosService.getMovimientos(page, this.pageSize).subscribe({
+    this.movimientosService.getMovimientos(page, this.pageSize, this.searchQuery).subscribe({
       next: (response) => {
         this.movimientos = response.Data;
         this.filteredMovimientos = [...this.movimientos];
@@ -57,7 +60,9 @@ export class MovimientosComponent implements OnInit {
   }
 
   onSearch(searchTerm: string): void {
-    console.log('Buscando:', searchTerm);
+    this.searchQuery = searchTerm;
+    this.currentPage = 1;
+    this.loadMovimientos(1);
   }
 
   onNewMovimiento(): void {

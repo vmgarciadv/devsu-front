@@ -13,10 +13,14 @@ export class MovimientosService {
 
   constructor(private http: HttpClient) { }
 
-  getMovimientos(pageNumber: number = 1, pageSize: number = 15): Observable<PaginatedResponse<Movimiento>> {
-    const params = new HttpParams()
+  getMovimientos(pageNumber: number = 1, pageSize: number = 15, searchQuery?: string): Observable<PaginatedResponse<Movimiento>> {
+    let params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());
+    
+    if (searchQuery && searchQuery.trim()) {
+      params = params.set('q', searchQuery.trim());
+    }
     
     return this.http.get<PaginatedResponse<Movimiento>>(this.apiUrl, { params });
   }
