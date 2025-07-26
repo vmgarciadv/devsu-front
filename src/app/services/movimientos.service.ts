@@ -18,6 +18,9 @@ export class MovimientosService {
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());
     
+    const timezoneOffset = -(new Date().getTimezoneOffset() / 60);
+    params = params.set('timezone', timezoneOffset.toString());
+    
     if (searchQuery && searchQuery.trim()) {
       params = params.set('q', searchQuery.trim());
     }
