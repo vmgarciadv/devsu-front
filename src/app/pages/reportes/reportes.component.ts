@@ -40,7 +40,7 @@ export class ReportesComponent implements OnInit {
   }
 
   loadClientes(): void {
-    this.clientesService.getClientes().subscribe({
+    this.clientesService.getAllClientes().subscribe({
       next: (clientes) => {
         this.clientes = clientes;
       },

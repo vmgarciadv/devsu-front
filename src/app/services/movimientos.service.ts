@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Movimiento } from '../models/movimiento.model';
 import { environment } from '../../environments/environment';
+import { PaginatedResponse } from './clientes.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,15 @@ export class MovimientosService {
 
   constructor(private http: HttpClient) { }
 
-  getMovimientos(): Observable<Movimiento[]> {
+  getMovimientos(pageNumber: number = 1, pageSize: number = 15): Observable<PaginatedResponse<Movimiento>> {
+    const params = new HttpParams()
+      .set('pageNumber', pageNumber.toString())
+      .set('pageSize', pageSize.toString());
+    
+    return this.http.get<PaginatedResponse<Movimiento>>(this.apiUrl, { params });
+  }
+  
+  getAllMovimientos(): Observable<Movimiento[]> {
     return this.http.get<Movimiento[]>(this.apiUrl);
   }
 

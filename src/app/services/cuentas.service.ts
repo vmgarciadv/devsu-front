@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Cuenta } from '../models/cuenta.model';
 import { environment } from '../../environments/environment';
+import { PaginatedResponse } from './clientes.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,15 @@ export class CuentasService {
 
   constructor(private http: HttpClient) { }
 
-  getCuentas(): Observable<Cuenta[]> {
+  getCuentas(pageNumber: number = 1, pageSize: number = 15): Observable<PaginatedResponse<Cuenta>> {
+    const params = new HttpParams()
+      .set('pageNumber', pageNumber.toString())
+      .set('pageSize', pageSize.toString());
+    
+    return this.http.get<PaginatedResponse<Cuenta>>(this.apiUrl, { params });
+  }
+  
+  getAllCuentas(): Observable<Cuenta[]> {
     return this.http.get<Cuenta[]>(this.apiUrl);
   }
 

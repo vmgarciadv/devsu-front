@@ -16,6 +16,10 @@ export class ReportesService {
     let params = new HttpParams();
     params = params.set('cliente', cliente);
     
+    // Ajustar segun zona horaria del usuario
+    const timezoneOffset = -(new Date().getTimezoneOffset() / 60);
+    params = params.set('timezone', timezoneOffset.toString());
+    
     if (fecha) {
       params = params.set('fecha', fecha);
     } else if (fechaInicio && fechaFin) {

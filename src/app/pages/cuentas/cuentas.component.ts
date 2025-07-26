@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SearchBarComponent } from '../../components/shared/search-bar/search-bar.component';
 import { ModalCuentaComponent } from '../../components/shared/modal-cuenta/modal-cuenta.component';
 import { NotificationModalComponent } from '../../components/shared/notification-modal/notification-modal.component';
@@ -11,7 +12,7 @@ import { Cuenta } from '../../models/cuenta.model';
 @Component({
   selector: 'app-cuentas',
   standalone: true,
-  imports: [CommonModule, SearchBarComponent, ModalCuentaComponent, NotificationModalComponent, ConfirmationModalComponent],
+  imports: [CommonModule, FormsModule, SearchBarComponent, ModalCuentaComponent, NotificationModalComponent, ConfirmationModalComponent],
   templateUrl: './cuentas.component.html',
   styleUrl: './cuentas.component.scss'
 })
@@ -25,6 +26,15 @@ export class CuentasComponent implements OnInit {
   
   isConfirmationModalOpen: boolean = false;
   cuentaToDelete: Cuenta | null = null;
+  
+  // Paginacion
+  currentPage: number = 1;
+  pageSize: number = 15;
+  totalPages: number = 0;
+  totalItems: number = 0;
+  
+  // Usar Math en el template
+  Math = Math;
 
   constructor(
     private cuentasService: CuentasService,
@@ -37,11 +47,14 @@ export class CuentasComponent implements OnInit {
     this.loadCuentas();
   }
 
-  loadCuentas(): void {
-    this.cuentasService.getCuentas().subscribe({
-      next: (data) => {
-        this.cuentas = data;
+  loadCuentas(page: number = 1): void {
+    this.cuentasService.getCuentas(page, this.pageSize).subscribe({
+      next: (response) => {
+        this.cuentas = response.Data;
         this.filteredCuentas = [...this.cuentas];
+        this.currentPage = response.PageNumber;
+        this.totalPages = response.TotalPages;
+        this.totalItems = response.TotalRecords;
       },
       error: (error) => {
         console.error('Error al cargar cuentas:', error);
@@ -127,7 +140,7 @@ export class CuentasComponent implements OnInit {
         next: () => {
           this.isConfirmationModalOpen = false;
           this.notificationService.showSuccess('Cuenta eliminada correctamente');
-          this.loadCuentas();
+          this.loadCuentas(this.currentPage);
           this.cuentaToDelete = null;
         },
         error: (error) => {
@@ -143,5 +156,48 @@ export class CuentasComponent implements OnInit {
   onCancelDelete(): void {
     this.isConfirmationModalOpen = false;
     this.cuentaToDelete = null;
+  }
+  
+  onPageChange(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.loadCuentas(page);
+    }
+  }
+  
+  getPageNumbers(): (number | string)[] {
+    const pages: (number | string)[] = [];
+    const maxPagesToShow = 5;
+    
+    if (this.totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      
+      let start = Math.max(2, this.currentPage - 1);
+      let end = Math.min(this.totalPages - 1, this.currentPage + 1);
+      
+      if (start > 2) {
+        pages.push('...');
+      }
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      
+      if (end < this.totalPages - 1) {
+        pages.push('...');
+      }
+      
+      pages.push(this.totalPages);
+    }
+    
+    return pages;
+  }
+  
+  onPageSizeChange(): void {
+    this.currentPage = 1;
+    this.loadCuentas(1);
   }
 }
